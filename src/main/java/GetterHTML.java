@@ -8,7 +8,6 @@ public class GetterHTML {
     String url;
 
     public String getHTML(){
-        System.out.println("Entrei no main do getHTML");
         try {
             HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(5))
@@ -16,6 +15,7 @@ public class GetterHTML {
 
             HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url))
+            .header("User-agent", "Meu-projeto/1.0 (guilherme2becker@gmail.com)")
             .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -28,8 +28,6 @@ public class GetterHTML {
 
     public GetterHTML(String url){
         this.url = url;
-        System.out.println("Entrei no construtor do getHTML");
-        System.out.println("URL: " + this.url);
     }
     
 }

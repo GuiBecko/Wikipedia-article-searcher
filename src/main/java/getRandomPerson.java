@@ -1,6 +1,9 @@
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 public class getRandomPerson {
     public static void main(String[] args){
+        System.out.println("Comeco do codigo");
         String[] persons = {
             "https://pt.wikiquote.org/wiki/Buda",
             "https://pt.wikiquote.org/wiki/Charlie_Chaplin",
@@ -15,19 +18,28 @@ public class getRandomPerson {
             "https://pt.wikiquote.org/wiki/Voltaire",
             "https://pt.wikiquote.org/wiki/William_Shakespeare",
         };
-        String person = RandomPerson(persons);
-        System.out.println("Pessoa escolhida: "+ person);
-        System.out.println("Chamando o html");
+        String personUrl = persons[RandomNumber(12)];
+        System.out.println("personUrl: " + personUrl);
+        
+        
+        GetterHTML getter = new GetterHTML(personUrl);
+        String rawHtml = getter.getHTML();
+        
+        
+        List<String> todasAsUls = htmlTransformer.htmlToList(rawHtml);
+        List<String> citacoes = new ArrayList<>();
 
-        GetterHTML html = new GetterHTML(person);
-        System.out.println(html.getHTML());
+        for(String ul : todasAsUls){
+            if(ul.contains("\"")){
+                citacoes.add(ul.replaceAll("\\[\\d+\\]", ""));
+            }
+        }
+        System.out.println(todasAsUls.get(RandomNumber(todasAsUls.size() + 1)));
         
     };
-
-    public static String RandomPerson(String[] persons){
+    
+    public static int RandomNumber(int bound){
         Random random = new Random();
-        String str = persons[random.nextInt(12)];
-
-        return str;
-    };
+        return random.nextInt(bound);
+    }
 }
