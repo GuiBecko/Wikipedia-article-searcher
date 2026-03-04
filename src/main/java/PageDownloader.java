@@ -14,35 +14,33 @@ public class PageDownloader {
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .build();
 
-    public static void getSummary(String url){
+    public static String getSummary(String url){
         String html = getHtml(url);
-        if(html == "Pagina nao encontrada"){
-            System.out.println("Nao foi possivel carregar a pagina");
-            return;
-        }
+        if(html == null) return null;
+
         Document doc = Jsoup.parse(html);
 
+        //se cair na pagina de artigo nao encontrado
         if (!doc.select(".noarticletext").isEmpty()) {
-            System.out.println("Erro: O artigo solicitado nao existe na Wikipedia.");
-            return;
+            return "Erro: O artigo solicitado nao existe na Wikipedia.";
         }
 
+        //div mae do summary
         Element content = doc.selectFirst("div.mw-content-ltr");
-
         if (content != null) {
-        // 2. Filtramos parágrafos que podem estar vazios ou ser apenas coordenadas
-        Element firstP = content.select("> p").stream()
+            Element firstP = content.select("> p").stream()
                                 .filter(p -> !p.text().isBlank())
                                 .findFirst()
                                 .orElse(null);
 
-        if (firstP != null) {
-            String snippet = firstP.text().replaceAll("\\[\\d+\\]", "");
-            System.out.println(snippet);
-        } else {
-            System.out.println("Nenhum parágrafo de texto encontrado.");
+            if (firstP != null) {
+                String snippet = firstP.text().replaceAll("\\[\\d+\\]", "");
+                return snippet;
+            }else {
+                System.out.println("Nenhum parágrafo de texto encontrado.");
+            }
         }
-    }
+        return null;
     }
 
     public static String getHtml(String url){
@@ -55,8 +53,9 @@ public class PageDownloader {
 
             HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 
-            if(response.body().isBlank() || response.body().length() == 0) return "Pagina nao encontrada";
-            
+            if(response.body().isBlank() || response.body().length() == 0){
+                throw new Exception("Pagina nao encontrada");
+            }
             return response.body();
         }catch(Exception e){
             System.out.println(e);
@@ -65,4 +64,3 @@ public class PageDownloader {
     }
 
 }
-//mw-content-ltr > p

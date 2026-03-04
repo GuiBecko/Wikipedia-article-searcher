@@ -1,3 +1,5 @@
 SummarySearcher.class
 Main.class
 PageDownloader.class
+SummaryCache$1.class
+SummaryCache.class

@@ -2,11 +2,33 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 public class SummarySearcher {
+    public SummaryCache cache = new SummaryCache(5);
 
-    public static void search(String artigo){
+    public int search(String artigo){
         artigo = sanitize(artigo);
         String url = "https://pt.wikipedia.org/wiki/" + artigo;
-        PageDownloader.getSummary(url);
+
+        /*1. Buscar na LRUCache
+          2. Fazer o download do Html
+         */
+
+        try{
+            String summary = cache.get(url);
+            if(summary == null){
+                throw new Exception("Resumo nao achado no LRU");
+            }
+            System.out.println(summary);
+            return 0;
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        
+        String summary = PageDownloader.getSummary(url);
+        cache.put(url, summary);
+
+        System.out.println("===Resumo===");
+        System.out.println(summary);
+        return 1;
     }
 
     //transforma espaços em _
