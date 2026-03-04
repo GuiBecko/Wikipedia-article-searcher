@@ -11,24 +11,20 @@ public class SummarySearcher {
         /*1. Buscar na LRUCache
           2. Fazer o download do Html
          */
+        String summary = cache.get(url);
 
-        try{
-            String summary = cache.get(url);
-            if(summary == null){
-                throw new Exception("Resumo nao achado no LRU");
-            }
+        if(summary == null){
+            summary = PageDownloader.getSummary(url);
+            cache.put(url, summary);
+            System.out.println("===Resumo===");
+            System.out.println(summary);
+            return 1;
+        }else{
+            System.out.println("===Resumo===");
             System.out.println(summary);
             return 0;
-        }catch(Exception e){
-            System.out.println(e);
         }
         
-        String summary = PageDownloader.getSummary(url);
-        cache.put(url, summary);
-
-        System.out.println("===Resumo===");
-        System.out.println(summary);
-        return 1;
     }
 
     //transforma espaços em _
